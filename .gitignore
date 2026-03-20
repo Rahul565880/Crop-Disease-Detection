@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+venv/
+.venv/
+env/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+dist/
+build/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Database
+*.sqlite
+*.db
+
+# Uploads
+uploads/*
+!uploads/.gitkeep
+
+# ML models (keep only config)
+*.h5
+*.pb
+*.tflite
+!ml-service/models/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/
+
+# Cache
+.cache/
+__pycache__/
