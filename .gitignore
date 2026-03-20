@@ -48,3 +48,7 @@ coverage/
 # Cache
 .cache/
 __pycache__/
+
+# Dataset images (too large for GitHub)
+ml-service/dataset/
+ml-service/datasetraw/

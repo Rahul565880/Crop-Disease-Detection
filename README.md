@@ -1,34 +1,39 @@
 # 🌾 Crop Disease Detection Application
 
-A full-stack web application that allows farmers to upload images of crop leaves and detect diseases using AI/ML models. The system analyzes images and returns disease name, confidence score, and treatment suggestions.
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-black?style=flat&logo=vercel)](https://crop-disease-detection-phi.vercel.app)
+[![API](https://img.shields.io/badge/API-Render-blue?style=flat&logo=render)](https://crop-disease-detection-98fp.onrender.com)
+
+A full-stack web application that allows farmers to upload images of crop leaves and detect diseases using AI/ML. The system analyzes images and returns disease name, confidence score, severity, and treatment suggestions.
+
+## ✨ New Features
+* 📱 **Share to WhatsApp**: Easily share scan reports and disease details.
+* 🖼️ **Multi-Image Upload**: Analyze multiple crop leaves at once.
+* 🛒 **Medicine Shop**: Buy recommended treatments directly from Amazon/Flipkart.
+* 🌦️ **Weather Alerts**: Real-time disease risk alerts based on local weather conditions.
+* 🌍 **Multi-language**: Supports English, Hindi, Kannada, and Telugu.
 
 ## 📋 Features
-
 ### User Features
 - User registration and login (JWT authentication)
 - Upload crop images (camera or gallery)
-- Get disease prediction results
-- View confidence percentage
-- Get treatment suggestions (chemical + organic)
+- Get disease prediction results with confidence score
+- View treatment suggestions (chemical + organic)
 - View previous scan history
-- Multi-language support (English, Hindi, Kannada)
+- Multi-language support
 
 ### Admin Features
 - Manage disease database (CRUD operations)
 - Update treatment details
 - Monitor system usage
-- Manage users
 
 ## 🏗️ Tech Stack
-
 - **Frontend:** React.js with Vite
 - **Backend:** Node.js with Express
-- **Database:** MySQL with Sequelize ORM
+- **Database:** **Supabase (PostgreSQL)**
 - **AI/ML:** TensorFlow/Keras with FastAPI
 - **Authentication:** JWT
 
 ## 📂 Project Structure
-
 ```
 crop-disease-detection/
 ├── client/                 # React Frontend
@@ -42,18 +47,16 @@ crop-disease-detection/
 │   └── package.json
 │
 ├── server/                # Node.js Backend
-│   ├── config/          # Database config
 │   ├── controllers/    # Route controllers
 │   ├── middleware/      # Auth middleware
-│   ├── models/         # Sequelize models
 │   ├── routes/         # API routes
+│   ├── services/       # Supabase services
 │   ├── utils/          # Utility functions
 │   └── package.json
 │
 └── ml-service/           # Python AI Service
     ├── models/          # Trained model
     ├── train.py        # Training script
-    ├── predict.py      # Prediction logic
     ├── app.py          # FastAPI server
     └── requirements.txt
 ```
@@ -61,10 +64,9 @@ crop-disease-detection/
 ## 🚀 Getting Started
 
 ### Prerequisites
-
 - Node.js (v18+)
 - Python (v3.9+)
-- MySQL (v8.0+)
+- Supabase Account (for Database)
 
 ### Backend Setup
 
@@ -80,13 +82,12 @@ npm install
 
 3. Create `.env` file:
 ```env
-PORT=5000
+PORT=10000
 NODE_ENV=development
 
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=your_password
-DB_NAME=crop_disease_db
+# Supabase Configuration
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-anon-key
 
 JWT_SECRET=your-secret-key
 JWT_EXPIRES_IN=7d
@@ -94,10 +95,9 @@ JWT_EXPIRES_IN=7d
 ML_SERVICE_URL=http://localhost:8000
 ```
 
-4. Setup database:
-```bash
-npm run db:setup
-```
+4. Setup Database (Supabase):
+- Create a project on Supabase.
+- Run the SQL setup script (available in `server/supabase-setup.sql`) to create tables.
 
 5. Start the server:
 ```bash
@@ -111,23 +111,13 @@ npm run dev
 cd ml-service
 ```
 
-2. Create virtual environment:
+2. Create virtual environment and install dependencies:
 ```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install dependencies:
-```bash
 pip install -r requirements.txt
 ```
 
-4. (Optional) Train the model:
-```bash
-python train.py /path/to/plantvillage/dataset
-```
-
-5. Start the ML service:
+3. Start the ML service:
 ```bash
 python app.py
 ```
@@ -144,12 +134,15 @@ cd client
 npm install
 ```
 
-3. Start the development server:
+3. Create `.env` file:
+```env
+VITE_API_URL=http://localhost:10000/api
+```
+
+4. Start the development server:
 ```bash
 npm run dev
 ```
-
-The application will be available at `http://localhost:3000`
 
 ## 🔌 API Endpoints
 
@@ -159,7 +152,6 @@ The application will be available at `http://localhost:3000`
 | POST | /api/auth/register | Register new user |
 | POST | /api/auth/login | Login user |
 | GET | /api/auth/profile | Get user profile |
-| PUT | /api/auth/profile | Update profile |
 
 ### Scans
 | Method | Endpoint | Description |
@@ -172,69 +164,53 @@ The application will be available at `http://localhost:3000`
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | /api/diseases | List all diseases |
-| GET | /api/diseases/:id | Get disease details |
-
-### Admin
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | /api/admin/users | List all users |
-| DELETE | /api/admin/users/:id | Delete user |
-| POST | /api/admin/diseases | Create disease |
-| PUT | /api/admin/diseases/:id | Update disease |
-| DELETE | /api/admin/diseases/:id | Delete disease |
-| GET | /api/admin/stats | Get system statistics |
 
 ## 🤖 AI/ML Model
+The application uses a CNN model based on MobileNetV2 architecture trained on the PlantVillage dataset. 
 
-The application uses a CNN model based on MobileNetV2 architecture trained on the PlantVillage dataset. The model can identify:
-
-- **Tomato:** Healthy, Early Blight, Late Blight, Leaf Mold, Septoria Leaf Spot, Spider Mites, Target Spot, Mosaic Virus, Leaf Curl Virus
+**Supported Crops:**
+- **Tomato:** Healthy, Early Blight, Late Blight
 - **Potato:** Healthy, Early Blight, Late Blight
-- **Corn:** Healthy, Northern Leaf Blight, Common Rust, Gray Leaf Spot
-- **Apple:** Healthy, Apple Scab, Black Rot, Cedar Apple Rust
+- **Corn:** Healthy, Common Rust, Northern Leaf Blight
+- **Apple:** Healthy, Apple Scab, Cedar Apple Rust
+- **Rice:** Healthy, Blast, Brown Spot
+- **Wheat:** Healthy, Powdery Mildew, Rust
+- **Grape:** Healthy, Black Rot, Leaf Blight
+- **Banana:** Healthy, Sigatoka, Panama Disease
+- **Cotton, Chilli, Turmeric, Sugarcane, Soybean**
 
 ## 📝 Environment Variables
 
 ### Server (.env)
 ```
-PORT=5000
-NODE_ENV=development
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=
-DB_NAME=crop_disease_db
-JWT_SECRET=your-secret-key
-ML_SERVICE_URL=http://localhost:8000
+PORT=10000
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-key
+JWT_SECRET=your-secret
 ```
 
-## 🧪 Testing
-
-To run tests (when implemented):
-```bash
-cd client
-npm test
+### Frontend (.env)
+```
+VITE_API_URL=https://your-api.onrender.com/api
 ```
 
 ## 📦 Deployment
 
 ### Frontend
-- Deploy to Vercel or Netlify
+- **Platform:** Vercel
+- **Live:** [crop-disease-detection-phi.vercel.app](https://crop-disease-detection-phi.vercel.app)
 
 ### Backend
-- Deploy to Render, Railway, or AWS EC2
-
-### ML Service
-- Deploy to Render with Python support
+- **Platform:** Render
+- **Live:** [crop-disease-detection-98fp.onrender.com](https://crop-disease-detection-98fp.onrender.com)
 
 ### Database
-- Use MongoDB Atlas for cloud database
+- **Platform:** Supabase (PostgreSQL Cloud)
 
 ## 📄 License
-
 This project is for educational purposes.
 
 ## 🙏 Acknowledgments
-
 - PlantVillage Dataset
 - TensorFlow/Keras
 - React.js

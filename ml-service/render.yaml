@@ -1,0 +1,7 @@
+build:
+  python: "3.11"
+
+run:
+  python: "3.11"
+  command: pip install -r requirements.txt && uvicorn app:app --host 0.0.0.0 --port $PORT
+  port: $PORT
