@@ -20,7 +20,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchDashboardData();
-    getLocation();
+    fetchWeather();
     const savedDarkMode = localStorage.getItem('darkMode') === 'true';
     setDarkMode(savedDarkMode);
   }, []);
@@ -30,32 +30,29 @@ const Dashboard = () => {
     localStorage.setItem('darkMode', darkMode);
   }, [darkMode]);
 
-  const getLocation = async () => {
+  const fetchWeather = async () => {
     try {
-      const response = await fetch('https://ipapi.co/json/');
+      const pos = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
+      }).catch(() => null);
+
+      let url = `${API_BASE}/weather`;
+      if (pos) {
+        url += `?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`;
+      }
+
+      const response = await fetch(url);
       const data = await response.json();
+
       if (data.city) {
-        const temp = data.temperature || 28;
-        const humidity = data.org || 75;
-        let risk = 'low', riskLevel = '✅ Low Risk', riskMsg = 'Weather conditions are favorable for your crops.';
-        
-        if (humidity > 80 || (temp > 25 && humidity > 60)) {
-          risk = 'high';
-          riskLevel = '🔴 High Risk';
-          riskMsg = '⚠️ High humidity! Fungal diseases (Blight, Rust, Mildew) are likely to spread. Apply preventive sprays now.';
-        } else if (humidity > 60) {
-          risk = 'medium';
-          riskLevel = '🟡 Moderate Risk';
-          riskMsg = 'Monitor crops closely. Keep an eye on leaf spots and early blight symptoms.';
-        }
-        
+        const riskSymbol = data.risk === 'high' ? '🔴' : data.risk === 'medium' ? '🟡' : '✅';
         setLocation({
-          city: data.city || data.country_name || 'Unknown',
-          temp,
-          humidity,
-          risk,
-          riskLevel,
-          riskMsg
+          city: data.city,
+          temp: data.temp,
+          humidity: data.humidity,
+          risk: data.risk,
+          riskLevel: `${riskSymbol} ${data.riskLevel}`,
+          riskMsg: data.riskMsg
         });
       }
     } catch {

@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
 
-const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:8000';
+const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'https://crop-disease-detection-ml.onrender.com';
 
 // Disease lookup cache
 let diseaseCache = null;

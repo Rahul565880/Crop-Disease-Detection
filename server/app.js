@@ -7,6 +7,7 @@ const authRoutes = require('./routes/authRoutes');
 const scanRoutes = require('./routes/scanRoutes');
 const diseaseRoutes = require('./routes/diseaseRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const weatherRoutes = require('./routes/weatherRoutes');
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/scans', scanRoutes);
 app.use('/api/diseases', diseaseRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/weather', weatherRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="64" fill="#16a34a"/>
+  <g transform="translate(256,220)">
+    <ellipse cx="0" cy="-50" rx="65" ry="90" fill="#22c55e" transform="rotate(-15)"/>
+    <ellipse cx="0" cy="-50" rx="65" ry="90" fill="#22c55e" transform="rotate(15)"/>
+    <ellipse cx="0" cy="-50" rx="65" ry="90" fill="#16a34a" transform="rotate(0)"/>
+    <line x1="0" y1="0" x2="0" y2="90" stroke="#15803d" stroke-width="10" stroke-linecap="round"/>
+  </g>
+  <text x="256" y="390" text-anchor="middle" font-family="Arial,sans-serif" font-size="36" font-weight="bold" fill="white">Crop Detect</text>
+</svg>
