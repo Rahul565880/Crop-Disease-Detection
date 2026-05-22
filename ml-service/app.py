@@ -6,8 +6,15 @@ from PIL import Image
 import json
 import os
 import numpy as np
-import tensorflow as tf
-from tensorflow import keras
+try:
+    import tensorflow as tf
+    from tensorflow import keras
+    TF_AVAILABLE = True
+except ImportError:
+    tf = None
+    keras = None
+    TF_AVAILABLE = False
+    print("TensorFlow not available. Running in mock prediction mode.")
 
 app = FastAPI(title="Plant Disease Detection API", version="1.0.0")
 
@@ -31,7 +38,7 @@ disease_mapping = {}
 def load_model_and_labels():
     global model, class_labels, disease_mapping
     
-    if os.path.exists(MODEL_PATH):
+    if TF_AVAILABLE and os.path.exists(MODEL_PATH):
         try:
             model = keras.models.load_model(MODEL_PATH)
             print(f"Model loaded successfully from {MODEL_PATH}")
@@ -39,8 +46,11 @@ def load_model_and_labels():
             print(f"Error loading model: {e}")
             model = None
     else:
-        print(f"Warning: Model file not found at {MODEL_PATH}")
-        print("Using mock prediction for demonstration")
+        if not TF_AVAILABLE:
+            print("TensorFlow not installed. Using mock prediction.")
+        else:
+            print(f"Warning: Model file not found at {MODEL_PATH}")
+            print("Using mock prediction for demonstration")
         model = None
     
     if os.path.exists(CLASS_LABELS_PATH):
@@ -143,6 +153,7 @@ async def health_check():
     return {
         "status": "healthy",
         "model_loaded": model is not None,
+        "tf_available": TF_AVAILABLE,
         "num_classes": len(class_labels) if class_labels else 0
     }
 
