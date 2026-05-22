@@ -35,12 +35,21 @@ const Upload = () => {
   const [selectedCrop, setSelectedCrop] = useState('auto');
   const [showCamera, setShowCamera] = useState(false);
   const [cameraStream, setCameraStream] = useState(null);
+  const [userLat, setUserLat] = useState(null);
+  const [userLon, setUserLon] = useState(null);
 
   const API_BASE = import.meta.env.VITE_API_URL || 'https://crop-disease-detection-98fp.onrender.com/api';
 
   useEffect(() => {
     const savedDarkMode = localStorage.getItem('darkMode') === 'true';
     setDarkMode(savedDarkMode);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        pos => { setUserLat(pos.coords.latitude); setUserLon(pos.coords.longitude); },
+        () => {},
+        { timeout: 5000 }
+      );
+    }
   }, []);
 
   useEffect(() => {
@@ -165,6 +174,10 @@ const Upload = () => {
         formData.append('image', selectedFiles[i]);
         if (selectedCrop !== 'auto') {
           formData.append('crop_type', selectedCrop);
+        }
+        if (userLat !== null && userLon !== null) {
+          formData.append('latitude', userLat);
+          formData.append('longitude', userLon);
         }
         
         const token = localStorage.getItem('token');

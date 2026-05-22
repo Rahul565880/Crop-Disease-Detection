@@ -11,6 +11,9 @@ import History from './pages/History';
 import Diseases from './pages/Diseases';
 import Profile from './pages/Profile';
 import Admin from './pages/Admin';
+import CropCalendar from './pages/CropCalendar';
+import FertilizerCalculator from './pages/FertilizerCalculator';
+import DiseaseMap from './pages/DiseaseMap';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -75,6 +78,9 @@ function AppRoutes() {
             <Admin />
           </AdminRoute>
         } />
+        <Route path="/calendar" element={<CropCalendar />} />
+        <Route path="/fertilizer" element={<FertilizerCalculator />} />
+        <Route path="/disease-map" element={<DiseaseMap />} />
       </Routes>
     </>
   );

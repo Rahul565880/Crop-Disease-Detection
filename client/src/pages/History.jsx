@@ -105,12 +105,25 @@ const History = () => {
               {darkMode ? '☀️ Light' : '🌙 Dark'}
             </button>
             {scans.length > 0 && (
-              <button 
-                onClick={handleClearAll}
-                style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '0.625rem 1.25rem', borderRadius: '10px', cursor: 'pointer', fontWeight: '600', fontSize: '0.875rem' }}
-              >
-                🗑️ Clear All
-              </button>
+              <>
+                <button onClick={async () => {
+                  const token = localStorage.getItem('token');
+                  const r = await fetch(`${import.meta.env.VITE_API_URL || 'https://crop-disease-detection-98fp.onrender.com/api'}/export/scans/csv`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                  });
+                  if (r.ok) {
+                    const blob = await r.blob();
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a'); a.href = url; a.download = 'scan-history.csv'; a.click();
+                    URL.revokeObjectURL(url);
+                  }
+                }} style={{ background: '#2563eb', color: '#fff', border: 'none', padding: '0.625rem 1.25rem', borderRadius: '10px', cursor: 'pointer', fontWeight: '600', fontSize: '0.875rem' }}>
+                  📥 CSV
+                </button>
+                <button onClick={handleClearAll} style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '0.625rem 1.25rem', borderRadius: '10px', cursor: 'pointer', fontWeight: '600', fontSize: '0.875rem' }}>
+                  🗑️ Clear All
+                </button>
+              </>
             )}
             <Link to="/upload" style={{ background: '#22c55e', color: '#fff', padding: '0.625rem 1.25rem', borderRadius: '10px', textDecoration: 'none', fontWeight: '600', fontSize: '0.875rem' }}>
               + New Scan

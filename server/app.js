@@ -8,6 +8,11 @@ const scanRoutes = require('./routes/scanRoutes');
 const diseaseRoutes = require('./routes/diseaseRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const weatherRoutes = require('./routes/weatherRoutes');
+const exportRoutes = require('./routes/exportRoutes');
+const calendarRoutes = require('./routes/calendarRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
+const fertilizerRoutes = require('./routes/fertilizerRoutes');
+const mapRoutes = require('./routes/mapRoutes');
 
 const app = express();
 
@@ -38,6 +43,11 @@ app.use('/api/scans', scanRoutes);
 app.use('/api/diseases', diseaseRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/weather', weatherRoutes);
+app.use('/api/export', exportRoutes);
+app.use('/api/calendar', calendarRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/fertilizer', fertilizerRoutes);
+app.use('/api/map', mapRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

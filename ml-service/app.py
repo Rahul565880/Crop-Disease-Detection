@@ -113,6 +113,21 @@ def mock_predict():
         {"disease_name": "Early Blight", "disease_code": "early_blight", "crop_type": "Potato"},
         {"disease_name": "Late Blight", "disease_code": "late_blight", "crop_type": "Potato"},
         {"disease_name": "Healthy", "disease_code": "healthy", "crop_type": "Potato"},
+        # Mango
+        {"disease_name": "Anthracnose", "disease_code": "mango_anthracnose", "crop_type": "Mango"},
+        {"disease_name": "Powdery Mildew", "disease_code": "mango_powdery_mildew", "crop_type": "Mango"},
+        {"disease_name": "Bacterial Canker", "disease_code": "mango_canker", "crop_type": "Mango"},
+        {"disease_name": "Healthy", "disease_code": "healthy", "crop_type": "Mango"},
+        # Groundnut
+        {"disease_name": "Leaf Spot", "disease_code": "groundnut_leaf_spot", "crop_type": "Groundnut"},
+        {"disease_name": "Stem Rot", "disease_code": "groundnut_stem_rot", "crop_type": "Groundnut"},
+        {"disease_name": "Rust", "disease_code": "groundnut_rust", "crop_type": "Groundnut"},
+        {"disease_name": "Healthy", "disease_code": "healthy", "crop_type": "Groundnut"},
+        # Soybean
+        {"disease_name": "Leaf Spot", "disease_code": "soybean_leaf_spot", "crop_type": "Soybean"},
+        {"disease_name": "Rust", "disease_code": "soybean_rust", "crop_type": "Soybean"},
+        {"disease_name": "Bacterial Blight", "disease_code": "soybean_bacterial_blight", "crop_type": "Soybean"},
+        {"disease_name": "Healthy", "disease_code": "healthy", "crop_type": "Soybean"},
     ]
     
     import random

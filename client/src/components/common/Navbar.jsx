@@ -90,6 +90,15 @@ const Navbar = () => {
               <Link to="/diseases" style={styles.link}>
                 🩺 {t('admin.diseases')}
               </Link>
+              <Link to="/calendar" style={styles.link}>
+                📅 Calendar
+              </Link>
+              <Link to="/fertilizer" style={styles.link}>
+                🧪 Fertilizer
+              </Link>
+              <Link to="/disease-map" style={styles.link}>
+                🗺️ Outbreaks
+              </Link>
               {isAdmin && (
                 <Link to="/admin" style={styles.link}>
                   ⚙️ {t('nav.admin')}

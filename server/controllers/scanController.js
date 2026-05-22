@@ -153,6 +153,9 @@ const uploadAndAnalyze = async (req, res) => {
       }
     }
 
+    const latitude = req.body.latitude ? parseFloat(req.body.latitude) : null;
+    const longitude = req.body.longitude ? parseFloat(req.body.longitude) : null;
+
     const { data: scan, error: scanError } = await supabase
       .from('scans')
       .insert({
@@ -160,7 +163,9 @@ const uploadAndAnalyze = async (req, res) => {
         image_url: imagePath,
         disease_name: diseaseName,
         confidence_score: confidence,
-        treatment_id: treatmentId
+        treatment_id: treatmentId,
+        latitude,
+        longitude
       })
       .select()
       .single();
