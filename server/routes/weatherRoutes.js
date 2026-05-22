@@ -8,55 +8,46 @@ const TEMP_UNIT = 'celsius';
 router.get('/', async (req, res) => {
   try {
     const { lat, lon } = req.query;
-
     let latitude, longitude, city;
 
     if (lat && lon) {
       latitude = parseFloat(lat);
       longitude = parseFloat(lon);
     } else {
-      const ipRes = await axios.get('https://ipapi.co/json/', { timeout: 5000 });
-      latitude = ipRes.data.latitude;
-      longitude = ipRes.data.longitude;
-      city = ipRes.data.city || ipRes.data.country_name || 'Unknown';
+      try {
+        const ipRes = await axios.get('https://ipapi.co/json/', { timeout: 5000 });
+        latitude = ipRes.data.latitude;
+        longitude = ipRes.data.longitude;
+        city = ipRes.data.city || ipRes.data.country_name || 'Unknown';
+      } catch {
+        city = 'Unknown';
+      }
     }
 
     if (!latitude || !longitude) {
-      return res.json({
-        city: city || 'Unknown',
-        temp: 28,
-        humidity: 65,
-        condition: 'clear',
-        risk: 'low',
-        riskLevel: 'Low Risk',
-        riskMsg: 'Weather conditions are favorable for your crops.',
-        source: 'fallback'
+      return res.json({ city: city || 'Unknown', temp: 28, humidity: 65, condition: 'clear', risk: 'low', riskLevel: 'Low Risk', riskMsg: 'Weather conditions are favorable for your crops.', source: 'fallback' });
+    }
+
+    let current;
+    try {
+      const weatherRes = await axios.get(`https://api.open-meteo.com/v1/forecast`, {
+        params: { latitude, longitude, current: ['temperature_2m', 'relative_humidity_2m', 'weather_code'].join(','), temperature_unit: 'celsius', forecast_days: 1 },
+        timeout: 8000
       });
+      current = weatherRes.data.current;
+    } catch (e) {
+      console.error('Open-Meteo fail:', e.message);
+      try {
+        const wtr = await axios.get(`https://wttr.in/${latitude},${longitude}?format=j1`, { timeout: 8000 });
+        const cc = wtr.data.current_condition[0];
+        current = { temperature_2m: parseFloat(cc.temp_C), relative_humidity_2m: parseFloat(cc.humidity), weather_code: 0 };
+      } catch (e2) {
+        console.error('wttr.in fail:', e2.message);
+        return res.json({ city: city || 'Unknown', temp: 28, humidity: 65, condition: 'clear', risk: 'low', riskLevel: 'Low Risk', riskMsg: 'Weather conditions are favorable for your crops.', source: 'fallback' });
+      }
     }
 
-    const metaRes = await axios.get(`https://geocoding-api.open-meteo.com/v1/search`, {
-      params: { name: `${latitude},${longitude}`, count: 1, language: LANG, format: 'json' },
-      timeout: 5000
-    });
-    if (!city && metaRes.data.results && metaRes.data.results.length > 0) {
-      city = metaRes.data.results[0].name || 'Unknown';
-    }
-
-    const weatherRes = await axios.get(`https://api.open-meteo.com/v1/forecast`, {
-      params: {
-        latitude,
-        longitude,
-        current: ['temperature_2m', 'relative_humidity_2m', 'weather_code', 'precipitation'].join(','),
-        temperature_unit: TEMP_UNIT === 'celsius' ? 'celsius' : 'fahrenheit',
-        forecast_days: 1
-      },
-      timeout: 5000
-    });
-
-    const current = weatherRes.data.current;
-    if (!current) {
-      throw new Error('No weather data returned');
-    }
+    if (!current) throw new Error('No weather data');
 
     const temp = current.temperature_2m;
     const humidity = current.relative_humidity_2m;
