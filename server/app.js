@@ -42,11 +42,9 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  console.error('=== ERROR ===', err.stack);
+  console.error(err.stack);
   res.status(500).json({ 
-    error: 'Internal Server Error',
-    message: err.message,
-    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    error: 'Internal Server Error'
   });
 });
 
