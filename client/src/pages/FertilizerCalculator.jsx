@@ -85,9 +85,18 @@ const FertilizerCalculator = () => {
 
         <div style={{ marginBottom: '1rem' }}>
           <label style={{ display: 'block', color: textColor, fontWeight: 600, marginBottom: '0.5rem', fontSize: '0.9rem' }}>🦠 Disease Code (optional)</label>
-          <input value={diseaseCode} onChange={e => setDiseaseCode(e.target.value)} placeholder="e.g. early_blight, rice_blast" style={{
-            width: '100%', padding: '0.75rem 1rem', borderRadius: '10px', border: `1px solid ${border}`, background: inputBg, color: textColor, fontSize: '0.95rem', outline: 'none'
-          }} />
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <input value={diseaseCode} onChange={e => setDiseaseCode(e.target.value)} placeholder="e.g. early_blight, rice_blast" style={{
+              flex: 1, padding: '0.75rem 1rem', borderRadius: '10px', border: `1px solid ${border}`, background: inputBg, color: textColor, fontSize: '0.95rem', outline: 'none'
+            }} />
+            <button onClick={() => {
+              const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+              if (!SpeechRecognition) { alert('Voice input not supported in this browser'); return; }
+              const recog = new SpeechRecognition(); recog.lang = 'en-US';
+              recog.onresult = (e) => setDiseaseCode(e.results[0][0].transcript);
+              recog.start();
+            }} title="Voice input" style={{ padding: '0.75rem', borderRadius: '10px', border: `1px solid ${border}`, background: inputBg, color: textColor, cursor: 'pointer', fontSize: '1.1rem' }}>🎤</button>
+          </div>
         </div>
 
         <button onClick={fetchRecommendation} disabled={!selectedCrop || loading} style={{

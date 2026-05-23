@@ -13,6 +13,11 @@ import Profile from './pages/Profile';
 import Admin from './pages/Admin';
 import FertilizerCalculator from './pages/FertilizerCalculator';
 import DiseaseMap from './pages/DiseaseMap';
+import MarketPrices from './pages/MarketPrices';
+import AgriStores from './pages/AgriStores';
+import ExpertChat from './pages/ExpertChat';
+import CommunityFeed from './pages/CommunityFeed';
+import Schemes from './pages/Schemes';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -79,6 +84,11 @@ function AppRoutes() {
         } />
         <Route path="/fertilizer" element={<FertilizerCalculator />} />
         <Route path="/disease-map" element={<DiseaseMap />} />
+        <Route path="/market-prices" element={<MarketPrices />} />
+        <Route path="/nearby-stores" element={<AgriStores />} />
+        <Route path="/expert-chat" element={<ExpertChat />} />
+        <Route path="/community" element={<CommunityFeed />} />
+        <Route path="/schemes" element={<Schemes />} />
       </Routes>
     </>
   );
