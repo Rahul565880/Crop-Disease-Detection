@@ -175,7 +175,7 @@ const uploadAndAnalyze = async (req, res) => {
 
     if (scanError) {
       console.error('Scan error:', scanError);
-      return res.status(500).json({ error: 'Failed to save scan', details: scanError.message });
+      return res.status(500).json({ error: `Failed to save scan: ${scanError.message}` });
     }
 
     console.log(`Upload completed in ${Date.now() - startTime}ms`);

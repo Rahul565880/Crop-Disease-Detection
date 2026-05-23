@@ -191,7 +191,7 @@ const Upload = () => {
         if (response.ok) {
           successCount++;
         } else {
-          errorMsg = data.error || data.details || `Server error (${response.status})`;
+          errorMsg = data.details || data.error || `Server error (${response.status})`;
         }
       } catch (err) {
         errorMsg = err.message || 'Failed to analyze image';
