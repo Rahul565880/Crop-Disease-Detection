@@ -174,7 +174,7 @@ const styles = {
   navbar: {
     position: 'sticky',
     top: 0,
-    zIndex: 1000,
+    zIndex: 1100,
     padding: '0.75rem 0',
     transition: 'all 0.3s ease'
   },

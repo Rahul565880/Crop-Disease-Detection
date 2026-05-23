@@ -33,7 +33,7 @@ const Sidebar = () => {
           display: 'inline-flex', alignItems: 'center', gap: '6px',
           background: '#1a3a1a', border: 'none', color: '#fff', cursor: 'pointer',
           padding: '8px 14px', borderRadius: '10px', fontSize: '0.85rem', fontWeight: 600,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.2)', position: 'relative', zIndex: 1,
           transition: 'all 0.2s',
           marginBottom: '12px',
         }}
@@ -45,7 +45,7 @@ const Sidebar = () => {
         <div
           onClick={() => setOpen(false)}
           style={{
-            position: 'fixed', inset: 0, zIndex: 999,
+            position: 'fixed', inset: 0, zIndex: 998,
             background: 'rgba(0,0,0,0.5)',
             animation: 'fadeIn 0.2s ease',
           }}
@@ -53,8 +53,8 @@ const Sidebar = () => {
       )}
 
       <div data-sidebar style={{
-        position: 'fixed', top: 0, left: 0, zIndex: 1000,
-        width: 'min(280px, 80vw)', height: '100vh',
+        position: 'fixed', top: '56px', left: 0, zIndex: 999,
+        width: 'min(280px, 80vw)', height: 'calc(100vh - 56px)',
         background: '#1a3a1a',
         display: 'flex', flexDirection: 'column',
         boxShadow: '4px 0 30px rgba(0,0,0,0.4)',
