@@ -18,6 +18,7 @@ const marketRoutes = require('./routes/marketRoutes');
 const storeRoutes = require('./routes/storeRoutes');
 const communityRoutes = require('./routes/communityRoutes');
 const schemeRoutes = require('./routes/schemeRoutes');
+const smsRoutes = require('./routes/smsRoutes');
 
 const app = express();
 
@@ -60,6 +61,7 @@ app.use('/api/market', marketRoutes);
 app.use('/api/stores', storeRoutes);
 app.use('/api/community', communityRoutes);
 app.use('/api/schemes', schemeRoutes);
+app.use('/api/sms', smsRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
