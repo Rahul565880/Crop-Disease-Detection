@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 const CROPS = [
@@ -37,6 +37,7 @@ const Upload = () => {
   const [cameraStream, setCameraStream] = useState(null);
   const [userLat, setUserLat] = useState(null);
   const [userLon, setUserLon] = useState(null);
+  const [scanResults, setScanResults] = useState([]);
 
   const API_BASE = import.meta.env.VITE_API_URL || 'https://crop-disease-detection-98fp.onrender.com/api';
 
@@ -164,8 +165,7 @@ const Upload = () => {
     if (selectedFiles.length === 0) return;
     setLoading(true);
     setError('');
-    let successCount = 0;
-    let errorMsg = '';
+    const results = [];
 
     for (let i = 0; i < selectedFiles.length; i++) {
       setLoadingIndex(i);
@@ -189,29 +189,18 @@ const Upload = () => {
         
         const data = await response.json();
         if (response.ok) {
-          successCount++;
+          results.push({ ...data.scan, image: previews[i]?.url });
         } else {
-          errorMsg = data.details || data.error || `Server error (${response.status})`;
+          results.push({ error: data.details || data.error || `Server error (${response.status})`, image: previews[i]?.url });
         }
       } catch (err) {
-        errorMsg = err.message || 'Failed to analyze image';
+        results.push({ error: err.message || 'Failed to analyze image', image: previews[i]?.url });
       }
     }
     
     setLoading(false);
     setLoadingIndex(-1);
-    
-    if (successCount > 0) {
-      if (successCount === selectedFiles.length) {
-        alert(`Successfully analyzed ${successCount} images!`);
-        clearSelection();
-        navigate('/history');
-      } else {
-        setError(`Analyzed ${successCount} of ${selectedFiles.length} images. Some failed.`);
-      }
-    } else {
-      setError(errorMsg || 'Failed to analyze images');
-    }
+    setScanResults(results);
   };
 
   const clearSelection = () => {
@@ -456,6 +445,40 @@ const Upload = () => {
             </div>
           )}
         </div>
+
+        {/* Results */}
+        {scanResults.length > 0 && (
+          <div style={{ background: cardBg, borderRadius: '20px', padding: '1.5rem', marginBottom: '1.5rem', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', border: `1px solid ${borderColor}` }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: '700', color: textColor, margin: '0 0 1rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              ✅ Analysis Results
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {scanResults.map((r, i) => (
+                <div key={i} style={{ display: 'flex', gap: '1rem', padding: '1rem', borderRadius: '12px', border: `1px solid ${borderColor}`, alignItems: 'center', flexWrap: 'wrap' }}>
+                  {r.image && <img src={r.image} alt="" style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '10px' }} />}
+                  <div style={{ flex: 1, minWidth: '150px' }}>
+                    {r.error ? (
+                      <p style={{ color: '#dc2626', margin: 0, fontWeight: '500' }}>❌ {r.error}</p>
+                    ) : (
+                      <>
+                        <p style={{ margin: 0, fontWeight: '700', color: textColor, fontSize: '1rem' }}>
+                          {r.disease_name || 'Unknown'} 
+                          {r.confidence_score && <span style={{ color: r.confidence_score > 0.7 ? '#22c55e' : r.confidence_score > 0.4 ? '#f59e0b' : '#ef4444', fontSize: '0.85rem', marginLeft: '0.5rem' }}>({(r.confidence_score * 100).toFixed(1)}%)</span>}
+                        </p>
+                        {r.detected_crop && <p style={{ margin: '0.25rem 0 0 0', color: textMuted, fontSize: '0.85rem' }}>🌾 {r.detected_crop}</p>}
+                      </>
+                    )}
+                  </div>
+                  {!r.error && r.id && (
+                    <Link to={`/result/${r.id}`} style={{ padding: '0.5rem 1rem', background: '#22c55e', color: '#fff', textDecoration: 'none', borderRadius: '10px', fontWeight: '600', fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
+                      View Details →
+                    </Link>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Tips */}
         <div style={{ background: '#fef3c7', borderRadius: '16px', padding: '1.25rem', marginBottom: '1.5rem', border: '1px solid #f59e0b' }}>

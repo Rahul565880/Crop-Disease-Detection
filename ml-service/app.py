@@ -35,10 +35,15 @@ model = None
 class_labels = []
 disease_mapping = {}
 
+FORCE_MOCK = os.getenv('FORCE_MOCK', 'false').lower() == 'true'
+
 def load_model_and_labels():
     global model, class_labels, disease_mapping
     
-    if TF_AVAILABLE and os.path.exists(MODEL_PATH):
+    if FORCE_MOCK:
+        print("FORCE_MOCK enabled. Skipping model loading.")
+        model = None
+    elif TF_AVAILABLE and os.path.exists(MODEL_PATH):
         try:
             model = keras.models.load_model(MODEL_PATH)
             print(f"Model loaded successfully from {MODEL_PATH}")
