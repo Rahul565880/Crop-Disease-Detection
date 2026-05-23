@@ -55,7 +55,7 @@ const callMLService = async (imageBuffer, filename) => {
     
     const response = await axios.post(`${ML_SERVICE_URL}/predict`, form, {
       headers: form.getHeaders(),
-      timeout: 15000
+      timeout: 30000
     });
     
     if (response.data && response.data.disease_name) {
