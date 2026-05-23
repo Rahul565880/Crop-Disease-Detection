@@ -34,6 +34,12 @@ const getDiseaseCache = async () => {
 
 const callMLService = async (imageBuffer, filename) => {
   try {
+    const healthResp = await axios.get(`${ML_SERVICE_URL}/health`, { timeout: 3000 }).catch(() => null);
+    if (!healthResp || healthResp.status !== 200) {
+      console.log('ML service unavailable, using mock predictions');
+      return null;
+    }
+
     const FormData = require('form-data');
     const form = new FormData();
     
@@ -55,7 +61,7 @@ const callMLService = async (imageBuffer, filename) => {
     
     const response = await axios.post(`${ML_SERVICE_URL}/predict`, form, {
       headers: form.getHeaders(),
-      timeout: 30000
+      timeout: 25000
     });
     
     if (response.data && response.data.disease_name) {
@@ -64,9 +70,6 @@ const callMLService = async (imageBuffer, filename) => {
     return null;
   } catch (error) {
     console.error('ML Service Error:', error.message);
-    if (error.message && error.message.includes('does not support image')) {
-      return { error: 'IMAGE_NOT_SUPPORTED', message: 'This image format is not supported. Please upload a JPG, PNG, or WEBP image.' };
-    }
     return null;
   }
 };
