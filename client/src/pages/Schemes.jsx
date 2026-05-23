@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useToast } from '../context/ToastContext';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://crop-disease-detection-98fp.onrender.com/api';
 
@@ -14,6 +15,7 @@ const SCHEME_TYPES = [
 ];
 
 const Schemes = () => {
+  const { showToast } = useToast();
   const [darkMode, setDarkMode] = useState(localStorage.getItem('darkMode') === 'true');
   const [schemes, setSchemes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -65,7 +67,7 @@ const Schemes = () => {
           }} />
           <button onClick={() => {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) { alert('Voice input not supported in this browser'); return; }
+            if (!SpeechRecognition) { showToast('Voice input not supported in this browser', 'error'); return; }
             const recog = new SpeechRecognition(); recog.lang = 'en-US';
             recog.onresult = (e) => setSearch(e.results[0][0].transcript);
             recog.start();

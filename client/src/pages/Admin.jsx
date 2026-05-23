@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { adminService } from '../services/api';
+import { useToast } from '../context/ToastContext';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://crop-disease-detection-98fp.onrender.com/api';
 
 const Admin = () => {
   const { t } = useTranslation();
+  const { showToast } = useToast();
   const [stats, setStats] = useState(null);
   const [users, setUsers] = useState([]);
   const [diseases, setDiseases] = useState([]);
@@ -60,7 +62,7 @@ const Admin = () => {
       await adminService.deleteUser(userId);
       fetchUsers();
     } catch (error) {
-      alert('Failed to delete user');
+      showToast('Failed to delete user', 'error');
     }
   };
 
@@ -70,8 +72,10 @@ const Admin = () => {
     try {
       if (editingDisease) {
         await adminService.updateDisease(editingDisease.disease_id, diseaseForm);
+        showToast('Disease updated successfully', 'success');
       } else {
         await adminService.createDisease(diseaseForm);
+        showToast('Disease created successfully', 'success');
       }
       
       setShowDiseaseForm(false);
@@ -89,7 +93,7 @@ const Admin = () => {
       });
       fetchData();
     } catch (error) {
-      alert('Failed to save disease');
+      showToast('Failed to save disease', 'error');
     }
   };
 
@@ -114,9 +118,10 @@ const Admin = () => {
     
     try {
       await adminService.deleteDisease(diseaseId);
+      showToast('Disease deleted successfully', 'success');
       fetchData();
     } catch (error) {
-      alert('Failed to delete disease');
+      showToast('Failed to delete disease', 'error');
     }
   };
 

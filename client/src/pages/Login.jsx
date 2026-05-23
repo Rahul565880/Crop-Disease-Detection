@@ -13,13 +13,34 @@ const Login = () => {
     password: ''
   });
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [touched, setTouched] = useState({});
+
+  const validate = (name, value) => {
+    if (name === 'email') {
+      if (!value) return 'Email is required';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Invalid email format';
+    }
+    if (name === 'password') {
+      if (!value) return 'Password is required';
+      if (value.length < 6) return 'Password must be at least 6 characters';
+    }
+    return '';
+  };
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (touched[name]) {
+      setFieldErrors(prev => ({ ...prev, [name]: validate(name, value) }));
+    }
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    setTouched(prev => ({ ...prev, [name]: true }));
+    setFieldErrors(prev => ({ ...prev, [name]: validate(name, value) }));
   };
 
   const handleSubmit = async (e) => {
@@ -56,12 +77,16 @@ const Login = () => {
             <input
               type="email"
               name="email"
-              style={styles.input}
               value={formData.email}
               onChange={handleChange}
+              onBlur={handleBlur}
               placeholder={t('auth.email')}
               required
+              aria-invalid={!!fieldErrors.email}
+              aria-describedby={fieldErrors.email ? 'email-error' : undefined}
+              style={{ ...styles.input, borderColor: fieldErrors.email ? '#dc2626' : '#e8e8e8' }}
             />
+            {fieldErrors.email && <span id="email-error" style={{ color: '#dc2626', fontSize: '0.8rem', marginTop: '-0.25rem' }}>{fieldErrors.email}</span>}
           </div>
 
           <div style={styles.inputGroup}>
@@ -69,12 +94,16 @@ const Login = () => {
             <input
               type="password"
               name="password"
-              style={styles.input}
               value={formData.password}
               onChange={handleChange}
+              onBlur={handleBlur}
               placeholder={t('auth.password')}
               required
+              aria-invalid={!!fieldErrors.password}
+              aria-describedby={fieldErrors.password ? 'password-error' : undefined}
+              style={{ ...styles.input, borderColor: fieldErrors.password ? '#dc2626' : '#e8e8e8' }}
             />
+            {fieldErrors.password && <span id="password-error" style={{ color: '#dc2626', fontSize: '0.8rem', marginTop: '-0.25rem' }}>{fieldErrors.password}</span>}
           </div>
 
           <button 

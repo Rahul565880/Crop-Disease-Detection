@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useToast } from '../context/ToastContext';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://crop-disease-detection-98fp.onrender.com/api';
 
@@ -18,6 +19,7 @@ const CROPS = [
 ];
 
 const FertilizerCalculator = () => {
+  const { showToast } = useToast();
   const [darkMode, setDarkMode] = useState(localStorage.getItem('darkMode') === 'true');
   const [selectedCrop, setSelectedCrop] = useState('');
   const [diseaseCode, setDiseaseCode] = useState('');
@@ -91,7 +93,7 @@ const FertilizerCalculator = () => {
             }} />
             <button onClick={() => {
               const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-              if (!SpeechRecognition) { alert('Voice input not supported in this browser'); return; }
+              if (!SpeechRecognition) { showToast('Voice input not supported in this browser', 'error'); return; }
               const recog = new SpeechRecognition(); recog.lang = 'en-US';
               recog.onresult = (e) => setDiseaseCode(e.results[0][0].transcript);
               recog.start();

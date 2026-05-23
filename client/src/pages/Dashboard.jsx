@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { SkeletonCard } from '../components/common/Skeleton';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://crop-disease-detection-98fp.onrender.com/api';
 
@@ -144,10 +145,13 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: bgColor }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ width: '50px', height: '50px', border: '4px solid #e2e8f0', borderTopColor: '#22c55e', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 1rem' }}></div>
-          <p style={{ color: textMuted }}>Loading dashboard...</p>
+      <div style={{ minHeight: '100vh', background: bgColor, padding: '1.5rem' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+            {[1,2,3,4].map(i => <SkeletonCard key={i} lines={2} cardStyle={{ background: cardBg, borderColor }} />)}
+          </div>
+          <SkeletonCard lines={4} cardStyle={{ background: cardBg, borderColor, marginBottom: '1.5rem' }} />
+          <SkeletonCard lines={4} cardStyle={{ background: cardBg, borderColor }} />
         </div>
       </div>
     );

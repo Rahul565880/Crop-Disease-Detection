@@ -107,9 +107,27 @@ const Upload = () => {
       validFiles.push(file);
       newPreviews.push({ file, url: URL.createObjectURL(file) });
     });
+
+    // Compress large images client-side
+    const compressImage = (file, maxW = 1200) => new Promise(resolve => {
+      if (file.size < 300 * 1024) return resolve(file);
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let { width, height } = img;
+        if (width > maxW) { height *= maxW / width; width = maxW; }
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob(blob => resolve(new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() })), 'image/jpeg', 0.8);
+      };
+      img.src = URL.createObjectURL(file);
+    });
     
     if (validFiles.length > 0) {
-      setSelectedFiles(prev => [...prev, ...validFiles]);
+      Promise.all(validFiles.map(f => compressImage(f))).then(compressed => {
+        setSelectedFiles(prev => [...prev, ...compressed]);
+      });
       setPreviews(prev => [...prev, ...newPreviews]);
       setError('');
     }
