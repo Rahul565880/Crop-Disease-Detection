@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/common/Navbar';
+import Sidebar from './components/common/Sidebar';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -43,55 +44,65 @@ const AdminRoute = ({ children }) => {
   return user.role === 'admin' ? children : <Navigate to="/dashboard" />;
 };
 
-function AppRoutes() {
+function AppContent() {
+  const { user } = useAuth();
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={
-          <PrivateRoute>
-            <Dashboard />
-          </PrivateRoute>
-        } />
-        <Route path="/upload" element={
-          <PrivateRoute>
-            <Upload />
-          </PrivateRoute>
-        } />
-        <Route path="/result/:id" element={
-          <PrivateRoute>
-            <Result />
-          </PrivateRoute>
-        } />
-        <Route path="/history" element={
-          <PrivateRoute>
-            <History />
-          </PrivateRoute>
-        } />
-        <Route path="/diseases" element={<Diseases />} />
-        <Route path="/profile" element={
-          <PrivateRoute>
-            <Profile />
-          </PrivateRoute>
-        } />
-        <Route path="/admin" element={
-          <AdminRoute>
-            <Admin />
-          </AdminRoute>
-        } />
-        <Route path="/fertilizer" element={<FertilizerCalculator />} />
-        <Route path="/disease-map" element={<DiseaseMap />} />
-        <Route path="/market-prices" element={<MarketPrices />} />
-        <Route path="/nearby-stores" element={<AgriStores />} />
-        <Route path="/expert-chat" element={<ExpertChat />} />
-        <Route path="/community" element={<CommunityFeed />} />
-        <Route path="/schemes" element={<Schemes />} />
-      </Routes>
-    </>
+      <div style={{ display: 'flex', flex: 1 }}>
+        {user && <Sidebar />}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/dashboard" element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            } />
+            <Route path="/upload" element={
+              <PrivateRoute>
+                <Upload />
+              </PrivateRoute>
+            } />
+            <Route path="/result/:id" element={
+              <PrivateRoute>
+                <Result />
+              </PrivateRoute>
+            } />
+            <Route path="/history" element={
+              <PrivateRoute>
+                <History />
+              </PrivateRoute>
+            } />
+            <Route path="/diseases" element={<Diseases />} />
+            <Route path="/profile" element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            } />
+            <Route path="/admin" element={
+              <AdminRoute>
+                <Admin />
+              </AdminRoute>
+            } />
+            <Route path="/fertilizer" element={<FertilizerCalculator />} />
+            <Route path="/disease-map" element={<DiseaseMap />} />
+            <Route path="/market-prices" element={<MarketPrices />} />
+            <Route path="/nearby-stores" element={<AgriStores />} />
+            <Route path="/expert-chat" element={<ExpertChat />} />
+            <Route path="/community" element={<CommunityFeed />} />
+            <Route path="/schemes" element={<Schemes />} />
+          </Routes>
+        </div>
+      </div>
+    </div>
   );
+}
+
+function AppRoutes() {
+  return <AppContent />;
 }
 
 function App() {

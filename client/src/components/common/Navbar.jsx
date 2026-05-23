@@ -90,27 +90,6 @@ const Navbar = () => {
               <Link to="/diseases" style={styles.link}>
                 🩺 {t('admin.diseases')}
               </Link>
-              <Link to="/fertilizer" style={styles.link}>
-                🧪 Fertilizer
-              </Link>
-              <Link to="/disease-map" style={styles.link}>
-                🗺️ Outbreaks
-              </Link>
-              <Link to="/market-prices" style={styles.link}>
-                📈 Prices
-              </Link>
-              <Link to="/nearby-stores" style={styles.link}>
-                🏪 Stores
-              </Link>
-              <Link to="/expert-chat" style={styles.link}>
-                💬 Chat
-              </Link>
-              <Link to="/community" style={styles.link}>
-                🌾 Community
-              </Link>
-              <Link to="/schemes" style={styles.link}>
-                🏛️ Schemes
-              </Link>
               {isAdmin && (
                 <Link to="/admin" style={styles.link}>
                   ⚙️ {t('nav.admin')}
