@@ -189,7 +189,7 @@ const Upload = () => {
         
         const data = await response.json();
         if (response.ok) {
-          results.push({ ...data.scan, image: previews[i]?.url });
+          results.push({ ...data.scan, image: previews[i]?.url, disease: data.disease, treatment: data.treatment });
         } else {
           results.push({ error: data.details || data.error || `Server error (${response.status})`, image: previews[i]?.url });
         }
@@ -454,25 +454,81 @@ const Upload = () => {
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {scanResults.map((r, i) => (
-                <div key={i} style={{ display: 'flex', gap: '1rem', padding: '1rem', borderRadius: '12px', border: `1px solid ${borderColor}`, alignItems: 'center', flexWrap: 'wrap' }}>
-                  {r.image && <img src={r.image} alt="" style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '10px' }} />}
-                  <div style={{ flex: 1, minWidth: '150px' }}>
-                    {r.error ? (
-                      <p style={{ color: '#dc2626', margin: 0, fontWeight: '500' }}>❌ {r.error}</p>
-                    ) : (
-                      <>
-                        <p style={{ margin: 0, fontWeight: '700', color: textColor, fontSize: '1rem' }}>
-                          {r.disease_name || 'Unknown'} 
-                          {r.confidence_score && <span style={{ color: r.confidence_score > 0.7 ? '#22c55e' : r.confidence_score > 0.4 ? '#f59e0b' : '#ef4444', fontSize: '0.85rem', marginLeft: '0.5rem' }}>({(r.confidence_score * 100).toFixed(1)}%)</span>}
-                        </p>
-                        {r.detected_crop && <p style={{ margin: '0.25rem 0 0 0', color: textMuted, fontSize: '0.85rem' }}>🌾 {r.detected_crop}</p>}
-                      </>
-                    )}
-                  </div>
-                  {!r.error && r.id && (
-                    <Link to={`/result/${r.id}`} style={{ padding: '0.5rem 1rem', background: '#22c55e', color: '#fff', textDecoration: 'none', borderRadius: '10px', fontWeight: '600', fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
-                      View Details →
-                    </Link>
+                <div key={i} style={{ padding: '1rem', borderRadius: '12px', border: `1px solid ${borderColor}` }}>
+                  {r.error ? (
+                    <p style={{ color: '#dc2626', margin: 0, fontWeight: '500' }}>❌ {r.error}</p>
+                  ) : (
+                    <>
+                      <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+                        {r.image && <img src={r.image} alt="" style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '12px' }} />}
+                        <div style={{ flex: 1, minWidth: '150px' }}>
+                          <p style={{ margin: 0, fontWeight: '700', color: textColor, fontSize: '1.1rem' }}>
+                            {r.disease_name || 'Unknown'}
+                            {r.confidence_score && (
+                              <span style={{
+                                display: 'inline-block', marginLeft: '0.5rem', padding: '0.15rem 0.6rem', borderRadius: '20px',
+                                fontSize: '0.8rem', fontWeight: '600',
+                                color: r.confidence_score > 0.7 ? '#166534' : r.confidence_score > 0.4 ? '#92400e' : '#991b1b',
+                                background: r.confidence_score > 0.7 ? '#dcfce7' : r.confidence_score > 0.4 ? '#fef3c7' : '#fee2e2'
+                              }}>
+                                {(r.confidence_score * 100).toFixed(1)}%
+                              </span>
+                            )}
+                          </p>
+                          {r.detected_crop && <p style={{ margin: '0.25rem 0', color: textMuted, fontSize: '0.85rem' }}>🌾 {r.detected_crop}</p>}
+                          {r.disease?.severity && (
+                            <p style={{ margin: '0.25rem 0', fontSize: '0.85rem' }}>
+                              Severity: <span style={{
+                                fontWeight: '600',
+                                color: r.disease.severity === 'high' ? '#dc2626' : r.disease.severity === 'medium' ? '#d97706' : '#16a34a'
+                              }}>
+                                {r.disease.severity === 'high' ? '🔴 High' : r.disease.severity === 'medium' ? '🟡 Medium' : '🟢 Low'}
+                              </span>
+                            </p>
+                          )}
+                        </div>
+                        <Link to={`/result/${r.id}`} style={{ padding: '0.5rem 1rem', background: '#22c55e', color: '#fff', textDecoration: 'none', borderRadius: '10px', fontWeight: '600', fontSize: '0.85rem', whiteSpace: 'nowrap', alignSelf: 'flex-start' }}>
+                          Full Report →
+                        </Link>
+                      </div>
+
+                      {r.disease?.description && (
+                        <div style={{ marginBottom: '0.5rem' }}>
+                          <p style={{ margin: '0 0 0.25rem 0', fontWeight: '600', color: textColor, fontSize: '0.9rem' }}>📋 Description</p>
+                          <p style={{ margin: 0, color: textMuted, fontSize: '0.85rem', lineHeight: '1.5' }}>{r.disease.description}</p>
+                        </div>
+                      )}
+
+                      {r.disease?.symptoms && (
+                        <div style={{ marginBottom: '0.5rem' }}>
+                          <p style={{ margin: '0 0 0.25rem 0', fontWeight: '600', color: textColor, fontSize: '0.9rem' }}>⚠️ Symptoms</p>
+                          <p style={{ margin: 0, color: textMuted, fontSize: '0.85rem', lineHeight: '1.5' }}>{r.disease.symptoms}</p>
+                        </div>
+                      )}
+
+                      {r.treatment && (
+                        <div style={{ background: darkMode ? '#0f172a' : '#f0fdf4', borderRadius: '10px', padding: '0.75rem', marginTop: '0.25rem' }}>
+                          {r.treatment.organic_solution && (
+                            <div style={{ marginBottom: '0.5rem' }}>
+                              <p style={{ margin: '0 0 0.25rem 0', fontWeight: '600', color: '#16a34a', fontSize: '0.85rem' }}>🌿 Organic Treatment</p>
+                              <p style={{ margin: 0, color: textMuted, fontSize: '0.8rem', lineHeight: '1.5' }}>{r.treatment.organic_solution}</p>
+                            </div>
+                          )}
+                          {r.treatment.chemical_solution && (
+                            <div style={{ marginBottom: '0.5rem' }}>
+                              <p style={{ margin: '0 0 0.25rem 0', fontWeight: '600', color: '#dc2626', fontSize: '0.85rem' }}>🧪 Chemical Treatment</p>
+                              <p style={{ margin: 0, color: textMuted, fontSize: '0.8rem', lineHeight: '1.5' }}>{r.treatment.chemical_solution}</p>
+                            </div>
+                          )}
+                          {r.treatment.prevention_methods && (
+                            <div>
+                              <p style={{ margin: '0 0 0.25rem 0', fontWeight: '600', color: '#2563eb', fontSize: '0.85rem' }}>🛡️ Prevention</p>
+                              <p style={{ margin: 0, color: textMuted, fontSize: '0.8rem', lineHeight: '1.5' }}>{r.treatment.prevention_methods}</p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               ))}
