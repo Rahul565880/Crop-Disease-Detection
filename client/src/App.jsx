@@ -49,9 +49,9 @@ function AppContent() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navbar />
-      <div style={{ display: 'flex', flex: 1 }}>
+      <div style={{ position: 'relative' }}>
         {user && <Sidebar />}
-        <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ padding: user ? '12px 16px 0' : 0 }}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
