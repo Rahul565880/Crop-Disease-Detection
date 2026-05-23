@@ -16,15 +16,25 @@ const MarketPrices = () => {
   const [prices, setPrices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [stateFilter, setStateFilter] = useState('');
 
-  useEffect(() => { document.body.style.backgroundColor = darkMode ? '#0f172a' : '#f8fafc'; }, [darkMode]);
+  useEffect(() => {
+    document.body.style.backgroundColor = darkMode ? '#0f172a' : '#f8fafc';
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        pos => setStateFilter('Karnataka'),
+        () => {},
+        { timeout: 3000 }
+      );
+    }
+  }, [darkMode]);
 
   useEffect(() => { fetchPrices(); }, [selectedCrop]);
 
   const fetchPrices = async () => {
     setLoading(true); setError('');
     try {
-      const r = await fetch(`${API_BASE}/market/prices?crop=${selectedCrop}`);
+      const r = await fetch(`${API_BASE}/market/prices?crop=${selectedCrop}${stateFilter ? '&state=Karnataka' : ''}`);
       const d = await r.json();
       setPrices(d.prices || []);
     } catch { setError('Failed to fetch prices'); }
@@ -64,6 +74,13 @@ const MarketPrices = () => {
             </span>
           </button>
         ))}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+          <button onClick={() => { setStateFilter(stateFilter === '' ? 'Karnataka' : ''); }} style={{
+            padding: '0.5rem 1.25rem', borderRadius: '9999px', border: `2px solid ${stateFilter ? '#16a34a' : border}`,
+            background: stateFilter ? '#f0fdf4' : 'transparent', color: stateFilter ? '#166534' : textColor,
+            cursor: 'pointer', fontWeight: stateFilter ? '700' : '500', fontSize: '0.8rem', transition: 'all 0.2s'
+          }}>📍 Karnataka Markets</button>
+        </div>
       </div>
 
       {loading ? (
@@ -97,6 +114,7 @@ const MarketPrices = () => {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                     <div>
                       <strong style={{ color: textColor }}>{p.market}</strong>
+                      {p.state === 'Karnataka' && <span style={{ marginLeft: '0.4rem', padding: '0.1rem 0.4rem', borderRadius: '4px', fontSize: '0.65rem', fontWeight: 600, background: '#f0fdf4', color: '#16a34a' }}>📍 KA</span>}
                       <span style={{ color: textMuted, fontSize: '0.8rem', marginLeft: '0.5rem' }}>{p.date}</span>
                     </div>
                     <span style={{ fontSize: '1.25rem', fontWeight: '700', color: p.price >= avgPrice ? '#ef4444' : '#22c55e' }}>

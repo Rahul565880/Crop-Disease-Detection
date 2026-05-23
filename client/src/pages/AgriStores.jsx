@@ -9,20 +9,17 @@ const AgriStores = () => {
   const [location, setLocation] = useState(null);
   const [searchRadius, setSearchRadius] = useState(5000);
   const [error, setError] = useState('');
+  const [region, setRegion] = useState('');
 
   useEffect(() => { document.body.style.backgroundColor = darkMode ? '#0f172a' : '#f8fafc'; }, [darkMode]);
 
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        pos => {
-          setLocation({ lat: pos.coords.latitude, lon: pos.coords.longitude });
-        },
+        pos => setLocation({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
         () => setError('Location access denied. Enable GPS to find nearby stores.'),
         { timeout: 8000 }
       );
-    } else {
-      setError('Geolocation not supported');
     }
   }, []);
 
@@ -33,6 +30,7 @@ const AgriStores = () => {
       const r = await fetch(`${API_BASE}/stores/nearby?lat=${location.lat}&lon=${location.lon}&radius=${searchRadius}`);
       const d = await r.json();
       setStores(d.stores || []);
+      setRegion(d.region || '');
       if (d.stores?.length === 0) setError('No agricultural stores found nearby. Try increasing radius.');
     } catch { setError('Failed to find nearby stores'); }
     setLoading(false);
@@ -67,7 +65,7 @@ const AgriStores = () => {
           <div style={{ flex: 1, minWidth: '200px' }}>
             <label style={{ display: 'block', color: textColor, fontWeight: 600, marginBottom: '0.5rem', fontSize: '0.9rem' }}>📍 Location</label>
             <div style={{ padding: '0.75rem 1rem', borderRadius: '10px', border: `1px solid ${border}`, background: darkMode ? '#0f172a' : '#f1f5f9', color: textColor }}>
-              {location ? `${location.lat.toFixed(4)}, ${location.lon.toFixed(4)}` : 'Detecting location...'}
+              {location ? `${location.lat.toFixed(4)}, ${location.lon.toFixed(4)}` : 'Detecting location...'} {region && <span style={{ color: '#16a34a', fontWeight: 600 }}> • 📍 {region}</span>}
             </div>
           </div>
           <div style={{ minWidth: '120px' }}>
