@@ -104,11 +104,17 @@ const ExpertChat = () => {
           )}
           {messages.map((msg) => {
             const isMe = msg.userId === (user.id || 'guest');
+            const isBot = msg.isBot;
             return (
               <div key={msg.id} style={{ display: 'flex', flexDirection: 'column', alignItems: isMe ? 'flex-end' : 'flex-start' }}>
-                <div style={{ padding: '0.75rem 1rem', borderRadius: '16px', background: isMe ? '#16a34a' : msgBg, color: isMe ? '#fff' : textColor, maxWidth: '75%', wordWrap: 'break-word' }}>
-                  {!isMe && <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#16a34a', display: 'block', marginBottom: '0.25rem' }}>{msg.userName}</span>}
-                  <span style={{ fontSize: '0.9rem' }}>{msg.text}</span>
+                <div style={{
+                  padding: '0.75rem 1rem', borderRadius: '16px', maxWidth: isBot ? '90%' : '75%', wordWrap: 'break-word',
+                  background: isBot ? (darkMode ? '#1e3a2f' : '#f0fdf4') : isMe ? '#16a34a' : msgBg,
+                  color: isBot ? '#16a34a' : isMe ? '#fff' : textColor,
+                  border: isBot ? `1px solid ${darkMode ? '#166534' : '#bbf7d0'}` : 'none',
+                }}>
+                  {!isMe && <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#16a34a', display: 'block', marginBottom: '0.25rem' }}>{isBot ? '🤖' : ''} {msg.userName}</span>}
+                  <span style={{ fontSize: '0.9rem', whiteSpace: 'pre-line' }}>{msg.text}</span>
                 </div>
                 <span style={{ fontSize: '0.65rem', color: textMuted, marginTop: '0.25rem', padding: '0 0.5rem' }}>
                   {new Date(msg.timestamp).toLocaleTimeString()}
