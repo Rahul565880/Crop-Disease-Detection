@@ -33,9 +33,13 @@ const Dashboard = () => {
 
   const fetchWeather = async () => {
     try {
-      const pos = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
-      }).catch(() => null);
+      const timeout = new Promise(r => setTimeout(() => r(null), 3000));
+      const pos = await Promise.race([
+        new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
+        }).catch(() => null),
+        timeout
+      ]);
 
       let url = `${API_BASE}/weather`;
       if (pos) {
@@ -55,17 +59,23 @@ const Dashboard = () => {
           riskLevel: `${riskSymbol} ${data.riskLevel}`,
           riskMsg: data.riskMsg
         });
+      } else {
+        setLocationFallback();
       }
     } catch {
-      setLocation({ 
-        city: 'Unknown', 
-        temp: '--', 
-        humidity: '--', 
-        risk: 'low', 
-        riskLevel: '✅ Low Risk', 
-        riskMsg: 'Unable to detect weather conditions.' 
-      });
+      setLocationFallback();
     }
+  };
+
+  const setLocationFallback = () => {
+    setLocation({ 
+      city: 'Kalaburagi', 
+      temp: '--', 
+      humidity: '--', 
+      risk: 'low', 
+      riskLevel: '✅ Low Risk', 
+      riskMsg: 'Unable to detect weather conditions.' 
+    });
   };
 
   const fetchDashboardData = async () => {

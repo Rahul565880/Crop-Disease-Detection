@@ -33,7 +33,7 @@ router.post('/posts', authenticate, async (req, res) => {
     if (!title || !description) return res.status(400).json({ error: 'title and description required' });
 
     const { data, error } = await supabase.from('community_posts').insert({
-      user_id: req.user.id,
+      user_id: req.user.user_id,
       user_name: req.user.name || 'Anonymous',
       title,
       description,
@@ -69,7 +69,7 @@ router.post('/posts/:id/comments', authenticate, async (req, res) => {
 
     const { data: comment, error } = await supabase.from('community_comments').insert({
       post_id: id,
-      user_id: req.user.id,
+      user_id: req.user.user_id,
       user_name: req.user.name || 'Anonymous',
       text,
     }).select().single();

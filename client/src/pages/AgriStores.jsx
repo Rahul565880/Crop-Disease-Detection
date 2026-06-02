@@ -17,9 +17,12 @@ const AgriStores = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         pos => setLocation({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-        () => setError('Location access denied. Enable GPS to find nearby stores.'),
-        { timeout: 8000 }
+        () => { setLocation({ lat: 17.3297, lon: 76.8343 }); setRegion('Kalaburagi'); },
+        { timeout: 8000, enableHighAccuracy: false }
       );
+    } else {
+      setLocation({ lat: 17.3297, lon: 76.8343 });
+      setRegion('Kalaburagi');
     }
   }, []);
 

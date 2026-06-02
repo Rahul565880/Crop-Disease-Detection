@@ -31,7 +31,7 @@ const CommunityFeed = () => {
         body: JSON.stringify(form)
       });
       if (r.ok) { setForm({ title: '', description: '', crop_type: '', disease_name: '' }); setShowForm(false); fetchPosts(); }
-      else setError('Failed to create post');
+      else { const errData = await r.json().catch(() => {}); setError('Failed to create post: ' + (errData?.error || r.status)); }
     } catch { setError('Network error'); }
   };
 

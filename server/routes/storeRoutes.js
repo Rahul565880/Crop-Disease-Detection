@@ -13,11 +13,17 @@ const KARNATAKA_STORES = {
     { name: 'Amruth Agri Clinic', type: 'agricultural_supplies', lat: 12.9345, lon: 77.5654, phone: '080-25678902', address: 'Basavanagudi, Bengaluru' },
     { name: 'UAS Seed Store', type: 'agricultural_supplies', lat: 13.0213, lon: 77.5831, phone: '080-27890124', address: 'Hebbal, Bengaluru' },
   ],
-  Gulbarga: [
-    { name: 'Gulbarga Agro Centre', type: 'agricultural_supplies', lat: 17.3297, lon: 76.8343, phone: '08472-256789', address: 'Station Road, Gulbarga' },
-    { name: 'Basaveshwar Fertilizers', type: 'fertilizer', lat: 17.3356, lon: 76.8456, phone: '08472-234567', address: 'S B Temple Road, Gulbarga' },
-    { name: 'Shree Renuka Pesticides', type: 'pesticide', lat: 17.3421, lon: 76.8567, phone: '08472-212345', address: 'M G Road, Gulbarga' },
-    { name: 'KVK Agri Supply', type: 'agricultural_supplies', lat: 17.3567, lon: 76.8234, phone: '08472-290123', address: 'Jail Road, Gulbarga' },
+  Kalaburagi: [
+    { name: 'Sharana Agro Centre', type: 'agricultural_supplies', lat: 17.3297, lon: 76.8343, phone: '08472-256789', address: 'Station Road, Kalaburagi' },
+    { name: 'Basaveshwar Fertilizers & Seeds', type: 'fertilizer', lat: 17.3356, lon: 76.8456, phone: '08472-234567', address: 'S B Temple Road, Kalaburagi' },
+    { name: 'Shree Renuka Pesticides & Chemicals', type: 'pesticide', lat: 17.3421, lon: 76.8567, phone: '08472-212345', address: 'M G Road, Kalaburagi' },
+    { name: 'KVK Agri Supply Centre', type: 'agricultural_supplies', lat: 17.3567, lon: 76.8234, phone: '08472-290123', address: 'Jail Road, Kalaburagi' },
+    { name: 'UAS Horticulture Store', type: 'agricultural_supplies', lat: 17.3389, lon: 76.8612, phone: '08472-278901', address: 'Sedam Road, Kalaburagi' },
+    { name: 'Sangameshwar Fertilizer Depot', type: 'fertilizer', lat: 17.3456, lon: 76.8312, phone: '08472-256790', address: 'Rama Nagar, Kalaburagi' },
+    { name: 'Krishna Agro Chemicals', type: 'pesticide', lat: 17.3512, lon: 76.8434, phone: '08472-267890', address: 'Shahabazar, Kalaburagi' },
+    { name: 'Sri Renuka Seed Store', type: 'agricultural_supplies', lat: 17.3265, lon: 76.8389, phone: '08472-245678', address: 'Super Market, Kalaburagi' },
+    { name: 'Gulbarga Organic Fertilizers', type: 'fertilizer', lat: 17.3321, lon: 76.8512, phone: '08472-223456', address: 'Shanti Nagar, Kalaburagi' },
+    { name: 'Krishi Mithra Agro Service', type: 'agricultural_supplies', lat: 17.3489, lon: 76.8678, phone: '08472-298765', address: 'Humnabad Road, Kalaburagi' },
   ],
   Davangere: [
     { name: 'Davangere Fertilizer Mart', type: 'fertilizer', lat: 14.4644, lon: 75.9742, phone: '08192-256789', address: 'P B Road, Davangere' },
@@ -35,7 +41,7 @@ const KARNATAKA_STORES = {
 
 const CITY_COORDS = {
   Bengaluru: { lat: 12.9716, lon: 77.5946 },
-  Gulbarga: { lat: 17.3297, lon: 76.8343 },
+  Kalaburagi: { lat: 17.3297, lon: 76.8343 },
   Davangere: { lat: 14.4644, lon: 75.9742 },
   Mysuru: { lat: 12.2958, lon: 76.6394 },
   Hubballi: { lat: 15.3647, lon: 75.1239 },
@@ -44,7 +50,7 @@ const CITY_COORDS = {
 function findNearestCity(lat, lon) {
   const R = 6371;
   let minDist = Infinity;
-  let nearest = 'Bengaluru';
+  let nearest = 'Kalaburagi';
   for (const [city, coords] of Object.entries(CITY_COORDS)) {
     const dLat = (coords.lat - lat) * Math.PI / 180;
     const dLon = (coords.lon - lon) * Math.PI / 180;

@@ -16,17 +16,19 @@ router.get('/', async (req, res) => {
     } else {
       try {
         const ipRes = await axios.get('https://ipapi.co/json/', { timeout: 5000 });
-        latitude = ipRes.data.latitude;
-        longitude = ipRes.data.longitude;
-        city = ipRes.data.city || ipRes.data.country_name || 'Unknown';
-      } catch {
-        city = 'Unknown';
-      }
+        if (!latitude) latitude = ipRes.data.latitude;
+        if (!longitude) longitude = ipRes.data.longitude;
+      } catch {}
     }
 
     if (!latitude || !longitude) {
-      return res.json({ city: city || 'Unknown', temp: 28, humidity: 65, condition: 'clear', risk: 'low', riskLevel: 'Low Risk', riskMsg: 'Weather conditions are favorable for your crops.', source: 'fallback' });
+      return res.json({ city: 'Kalaburagi', temp: 28, humidity: 65, condition: 'clear', risk: 'low', riskLevel: 'Low Risk', riskMsg: 'Weather conditions are favorable for your crops.', source: 'fallback' });
     }
+
+    try {
+      const geo = await axios.get(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`, { timeout: 3000, headers: { 'User-Agent': 'CropDiseaseApp/1.0' } });
+      city = geo.data?.address?.city || geo.data?.address?.town || geo.data?.address?.village || geo.data?.address?.state_district || null;
+    } catch {}
 
     let current;
     try {
@@ -43,7 +45,7 @@ router.get('/', async (req, res) => {
         current = { temperature_2m: parseFloat(cc.temp_C), relative_humidity_2m: parseFloat(cc.humidity), weather_code: 0 };
       } catch (e2) {
         console.error('wttr.in fail:', e2.message);
-        return res.json({ city: city || 'Unknown', temp: 28, humidity: 65, condition: 'clear', risk: 'low', riskLevel: 'Low Risk', riskMsg: 'Weather conditions are favorable for your crops.', source: 'fallback' });
+        return res.json({ city: city || 'Kalaburagi', temp: 28, humidity: 65, condition: 'clear', risk: 'low', riskLevel: 'Low Risk', riskMsg: 'Weather conditions are favorable for your crops.', source: 'fallback' });
       }
     }
 
@@ -76,7 +78,7 @@ router.get('/', async (req, res) => {
     }
 
     res.json({
-      city: city || 'Unknown',
+      city: city || 'Kalaburagi',
       temp,
       humidity,
       condition,
@@ -89,7 +91,7 @@ router.get('/', async (req, res) => {
   } catch (error) {
     console.error('Weather error:', error.message);
     res.json({
-      city: 'Unknown',
+      city: 'Kalaburagi',
       temp: 28,
       humidity: 65,
       condition: 'clear',
