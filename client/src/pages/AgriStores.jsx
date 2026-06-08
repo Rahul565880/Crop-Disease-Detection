@@ -2,6 +2,14 @@ import { useState, useEffect } from 'react';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://crop-disease-detection-98fp.onrender.com/api';
 
+const CITIES = [
+  { name: 'Kalaburagi', lat: 17.3297, lon: 76.8343 },
+  { name: 'Bengaluru', lat: 12.9716, lon: 77.5946 },
+  { name: 'Hubballi', lat: 15.3647, lon: 75.1239 },
+  { name: 'Davangere', lat: 14.4644, lon: 75.9742 },
+  { name: 'Mysuru', lat: 12.2958, lon: 76.6394 },
+];
+
 const AgriStores = () => {
   const [darkMode, setDarkMode] = useState(localStorage.getItem('darkMode') === 'true');
   const [stores, setStores] = useState([]);
@@ -25,6 +33,12 @@ const AgriStores = () => {
       setRegion('Kalaburagi');
     }
   }, []);
+
+  const setCity = (city) => {
+    setLocation({ lat: city.lat, lon: city.lon });
+    setRegion(city.name);
+    setStores([]);
+  };
 
   const searchStores = async () => {
     if (!location) return;
@@ -64,6 +78,16 @@ const AgriStores = () => {
       </div>
 
       <div style={{ background: cardBg, borderRadius: '20px', padding: '1.5rem', marginBottom: '1.5rem', border: `1px solid ${border}` }}>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+          <span style={{ color: textMuted, fontSize: '0.85rem', alignSelf: 'center', marginRight: '0.5rem' }}>📍 Switch City:</span>
+          {CITIES.map(c => (
+            <button key={c.name} onClick={() => setCity(c)} style={{
+              padding: '0.4rem 0.8rem', borderRadius: '8px', border: `1px solid ${region === c.name ? '#16a34a' : border}`,
+              background: region === c.name ? '#dcfce7' : 'transparent', color: region === c.name ? '#16a34a' : textColor,
+              cursor: 'pointer', fontSize: '0.8rem', fontWeight: region === c.name ? 700 : 400
+            }}>{c.name}</button>
+          ))}
+        </div>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
           <div style={{ flex: 1, minWidth: '200px' }}>
             <label style={{ display: 'block', color: textColor, fontWeight: 600, marginBottom: '0.5rem', fontSize: '0.9rem' }}>📍 Location</label>
