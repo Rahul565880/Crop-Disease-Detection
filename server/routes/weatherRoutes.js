@@ -8,26 +8,22 @@ const TEMP_UNIT = 'celsius';
 router.get('/', async (req, res) => {
   try {
     const { lat, lon } = req.query;
-    let latitude, longitude, city;
+    let latitude, longitude;
 
     if (lat && lon) {
       latitude = parseFloat(lat);
       longitude = parseFloat(lon);
-    } else {
-      try {
-        const ipRes = await axios.get('https://ipapi.co/json/', { timeout: 5000 });
-        if (!latitude) latitude = ipRes.data.latitude;
-        if (!longitude) longitude = ipRes.data.longitude;
-      } catch {}
     }
 
     if (!latitude || !longitude) {
       return res.json({ city: 'Kalaburagi', temp: 28, humidity: 65, condition: 'clear', risk: 'low', riskLevel: 'Low Risk', riskMsg: 'Weather conditions are favorable for your crops.', source: 'fallback' });
     }
 
+    let city = 'Kalaburagi';
     try {
       const geo = await axios.get(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`, { timeout: 3000, headers: { 'User-Agent': 'CropDiseaseApp/1.0' } });
-      city = geo.data?.address?.city || geo.data?.address?.town || geo.data?.address?.village || geo.data?.address?.state_district || null;
+      const resolved = geo.data?.address?.city || geo.data?.address?.town || geo.data?.address?.village || geo.data?.address?.state_district || '';
+      if (resolved && !resolved.includes('Boardman')) city = resolved;
     } catch {}
 
     let current;
